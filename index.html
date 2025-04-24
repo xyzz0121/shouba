@@ -1,276 +1,287 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>瘦成一道⚡️</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
-    <style>
-      .chart-container {
-        width: 80%;
-        margin: 20px auto;
-      }
-      .stats {
-        text-align: center;
-        font-size: 1.2em;
-        margin-top: 20px;
-      }
-      .ranking {
-        text-align: center;
-        font-size: 1.5em;
-        margin-top: 20px;
-      }
-      table {
-        width: 80%;
-        margin: 20px auto;
-        border-collapse: collapse;
-      }
-      th,
-      td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: center;
-      }
-      th {
-        background-color: #f2f2f2;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="ranking" id="ranking"></div>
-    <div class="stats" id="zhouyangStats"></div>
-    <div class="chart-container">
-      <canvas id="zhouyangChart"></canvas>
-    </div>
-    <div class="stats" id="xiaopangStats"></div>
-    <div class="chart-container">
-      <canvas id="xiaopangChart"></canvas>
-    </div>
-    <div class="stats" id="ziboStats"></div>
-    <div class="chart-container">
-      <canvas id="ziboChart"></canvas>
-    </div>
-    <div class="stats" id="junggeStats"></div>
-    <div class="chart-container">
-      <canvas id="junggeChart"></canvas>
-    </div>
-    <div class="stats" id="sancaizitongziStats"></div>
-    <div class="chart-container">
-      <canvas id="sancaizitongziChart"></canvas>
-    </div>
-    <div class="stats" id="qianggeStats"></div>
-    <div class="chart-container">
-      <canvas id="qianggeChart"></canvas>
-    </div>
-    <div class="stats" id="huigeStats"></div>
-    <div class="chart-container">
-      <canvas id="huigeChart"></canvas>
-    </div>
-    <div class="stats" id="tianhangStats"></div>
-    <div class="chart-container">
-      <canvas id="tianhangChart"></canvas>
-    </div>
-    <script>
-      function createChart(
-        ctx,
-        label,
-        actualData,
-        targetData,
-        color,
-        minY,
-        maxY,
-        title,
-        statsId
-      ) {
-        const reachedTargetCount = actualData.filter(
-          (value, index) =>
-            value !== null &&
-            targetData[index] !== null &&
-            value <= targetData[index]
-        ).length;
-        const validDataCount = actualData.filter(
-          (value) => value !== null
-        ).length;
-        const total = actualData.length - 2;
-        console.log(total);
-        const rate = ((reachedTargetCount / total) * 100).toFixed(2);
-        console.log(rate);
-        const isValid = validDataCount > 1;
-        document.getElementById(statsId).innerText = `${label}达标次数: ${
-          isValid ? reachedTargetCount : 0
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>瘦成一道⚡️</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+  <style>
+    .chart-container {
+      width: 80%;
+      margin: 20px auto;
+    }
+
+    .stats {
+      text-align: center;
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+
+    .ranking {
+      text-align: center;
+      font-size: 1.5em;
+      margin-top: 20px;
+    }
+
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="last" id="lastStatus"></div>
+  <div class="ranking" id="ranking"></div>
+  <div class="stats" id="zhouyangStats"></div>
+  <div class="chart-container">
+    <canvas id="zhouyangChart"></canvas>
+  </div>
+  <div class="stats" id="xiaopangStats"></div>
+  <div class="chart-container">
+    <canvas id="xiaopangChart"></canvas>
+  </div>
+  <div class="stats" id="ziboStats"></div>
+  <div class="chart-container">
+    <canvas id="ziboChart"></canvas>
+  </div>
+  <div class="stats" id="junggeStats"></div>
+  <div class="chart-container">
+    <canvas id="junggeChart"></canvas>
+  </div>
+  <div class="stats" id="sancaizitongziStats"></div>
+  <div class="chart-container">
+    <canvas id="sancaizitongziChart"></canvas>
+  </div>
+  <div class="stats" id="qianggeStats"></div>
+  <div class="chart-container">
+    <canvas id="qianggeChart"></canvas>
+  </div>
+  <div class="stats" id="huigeStats"></div>
+  <div class="chart-container">
+    <canvas id="huigeChart"></canvas>
+  </div>
+  <div class="stats" id="tianhangStats"></div>
+  <div class="chart-container">
+    <canvas id="tianhangChart"></canvas>
+  </div>
+  <script>
+    function createChart(
+      ctx,
+      label,
+      actualData,
+      targetData,
+      color,
+      minY,
+      maxY,
+      title,
+      statsId
+    ) {
+      const reachedTargetCount = actualData.filter(
+        (value, index) =>
+          value !== null &&
+          targetData[index] !== null &&
+          value <= targetData[index]
+      ).length;
+      const validDataCount = actualData.filter(
+        (value) => value !== null
+      ).length;
+      const total = actualData.length - 2;
+      const rate = ((reachedTargetCount / total) * 100).toFixed(2);
+      const lastStatus = actualData[total] <= targetData[total] ? "达标" : "失败";
+      const isValid = validDataCount > 1;
+      document.getElementById(statsId).innerText = `${label}达标次数: ${isValid ? reachedTargetCount : 0
         }`;
-        new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: ["第一次", "第二次", "第三次", "第四次", "第五次"],
-            datasets: [
-              {
-                label: label + "实际",
-                data: actualData,
-                borderColor: color,
-                tension: 0.1,
-                fill: false,
-                pointBackgroundColor: color,
-                pointBorderColor: color,
-                pointRadius: 5,
-                pointHoverRadius: 7,
-              },
-              {
-                label: label + "目标",
-                data: targetData,
-                borderColor: color,
-                borderDash: [5, 5],
-                tension: 0.1,
-                fill: false,
-                pointBackgroundColor: color,
-                pointBorderColor: color,
-                pointRadius: 5,
-                pointHoverRadius: 7,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              title: {
-                display: true,
-                text: title,
-              },
-              tooltip: {
-                callbacks: {
-                  label: function (context) {
-                    return context.raw !== null ? context.raw : "无数据";
-                  },
-                },
-              },
-              legend: {
-                display: true,
-              },
-              datalabels: {
-                display: true,
-                align: "top",
-                formatter: function (value) {
-                  return value !== null ? value : "";
+      let labels = Array(actualData.length).fill().map((_, i) => `第${i + 1}次`);
+      const min = Math.min.apply(null, [...targetData].filter(item => item !== null)) - 1;
+      const max = Math.max.apply(null, [...actualData].filter(item => item !== null)) + 1;
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: label + "实际",
+              data: actualData,
+              borderColor: color,
+              tension: 0.1,
+              fill: false,
+              pointBackgroundColor: color,
+              pointBorderColor: color,
+              pointRadius: 5,
+              pointHoverRadius: 7,
+            },
+            {
+              label: label + "目标",
+              data: targetData,
+              borderColor: color,
+              borderDash: [5, 5],
+              tension: 0.1,
+              fill: false,
+              pointBackgroundColor: color,
+              pointBorderColor: color,
+              pointRadius: 5,
+              pointHoverRadius: 7,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: title,
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  return context.raw !== null ? context.raw : "无数据";
                 },
               },
             },
-            scales: {
-              y: {
-                beginAtZero: false,
-                min: minY,
-                max: maxY,
+            legend: {
+              display: true,
+            },
+            datalabels: {
+              display: true,
+              align: "top",
+              formatter: function (value) {
+                return value !== null ? value : "";
               },
             },
           },
-        });
-        return {
-          label,
-          reachedTargetCount: isValid ? reachedTargetCount : 0,
-          total,
-          rate,
-        };
-      }
+          scales: {
+            y: {
+              beginAtZero: false,
+              min,
+              max,
+            },
+          },
+        },
+      });
+      return {
+        label,
+        lastStatus,
+        reachedTargetCount: isValid ? reachedTargetCount : 0,
+        total,
+        rate,
 
-      const stats = [
-        createChart(
-          document.getElementById("zhouyangChart").getContext("2d"),
-          "周扬",
-          [177.5, 176, 173.7, 173, null],
-          [null, 176, 174, 173, 171],
-          "rgb(255, 99, 132)",
-          170,
-          180,
-          "周扬体重变化折线图",
-          "zhouyangStats"
-        ),
-        createChart(
-          document.getElementById("xiaopangChart").getContext("2d"),
-          "散财童子小胖",
-          [111.2, 113, 111.7, 111, null],
-          [null, 110, 112, 111, 110.5],
-          "rgb(54, 162, 235)",
-          109,
-          113,
-          "散财童子小胖体重变化折线图",
-          "xiaopangStats"
-        ),
-        createChart(
-          document.getElementById("ziboChart").getContext("2d"),
-          "子博",
-          [167.9, 168, 167, 165.7, null],
-          [null, 167, 167, 166, 165.2],
-          "rgb(255, 206, 86)",
-          165,
-          170,
-          "子博体重变化折线图",
-          "ziboStats"
-        ),
-        createChart(
-          document.getElementById("junggeChart").getContext("2d"),
-          "骏哥",
-          [136.6, 140, 137.8, 135.8, null],
-          [null, 136, 138.5, 137.5, 136],
-          "rgb(75, 192, 192)",
-          135,
-          140,
-          "骏哥体重变化折线图",
-          "junggeStats"
-        ),
-        createChart(
-          document.getElementById("sancaizitongziChart").getContext("2d"),
-          "散财童子贵",
-          [205.2, 215, 215, 215, null],
-          [null, 205, 203, 203, 203],
-          "rgb(153, 102, 255)",
-          200,
-          220,
-          "散财童子贵体重变化折线图",
-          "sancaizitongziStats"
-        ),
-        createChart(
-          document.getElementById("qianggeChart").getContext("2d"),
-          "强哥",
-          [114.1, 112, 113, 112, null],
-          [null, 112.6, 111.8, 112, 111],
-          "rgb(255, 159, 64)",
-          110,
-          115,
-          "强哥体重变化折线图",
-          "qianggeStats"
-        ),
-        createChart(
-          document.getElementById("huigeChart").getContext("2d"),
-          "辉哥",
-          [141.8, 140, 139.4, 138.2, null],
-          [null, 139, 138, 138.4, 137.4],
-          "rgb(0, 128, 0)",
-          135,
-          145,
-          "辉哥体重变化折线图",
-          "huigeStats"
-        ),
-        createChart(
-          document.getElementById("tianhangChart").getContext("2d"),
-          "天航",
-          [34.6, 23.1, 23, null],
-          [null, 34, 21, 22.8],
-          "rgb(128, 0, 128)",
-          20,
-          35,
-          "天航百分比变化折线图",
-          "tianhangStats"
-        ),
-      ];
+      };
+    }
 
-      stats.sort((a, b) => b.rate - a.rate);
+    const stats = [
+      createChart(
+        document.getElementById("zhouyangChart").getContext("2d"),
+        "周扬",
+        [177.5, 176, 173.7, 173, 170.5, null],
+        [null, 176, 174, 173, 171, 169.5],
+        "rgb(255, 99, 132)",
+        170,
+        180,
+        "周扬体重变化折线图",
+        "zhouyangStats"
+      ),
+      createChart(
+        document.getElementById("xiaopangChart").getContext("2d"),
+        "小胖",
+        [111.2, 113, 111.7, 111, 112, null],
+        [null, 110, 112, 111, 110.5, 111],
+        "rgb(54, 162, 235)",
+        109,
+        113,
+        "小胖体重变化折线图",
+        "xiaopangStats"
+      ),
+      createChart(
+        document.getElementById("ziboChart").getContext("2d"),
+        "子博",
+        [167.9, 168, 167, 165.7, 164.4, null],
+        [null, 167, 167, 166, 165.2, 164.4],
+        "rgb(255, 206, 86)",
+        165,
+        170,
+        "子博体重变化折线图",
+        "ziboStats"
+      ),
+      createChart(
+        document.getElementById("junggeChart").getContext("2d"),
+        "骏哥",
+        [136.6, 140, 137.8, 135.8, 135.5, null],
+        [null, 136, 138.5, 137.5, 136, 136],
+        "rgb(75, 192, 192)",
+        135,
+        140,
+        "骏哥体重变化折线图",
+        "junggeStats"
+      ),
+      createChart(
+        document.getElementById("sancaizitongziChart").getContext("2d"),
+        "散财童子贵",
+        [205.2, 215, 215, 215, 215, null],
+        [null, 205, 203, 203, 203, 200],
+        "rgb(153, 102, 255)",
+        200,
+        220,
+        "散财童子贵体重变化折线图",
+        "sancaizitongziStats"
+      ),
+      createChart(
+        document.getElementById("qianggeChart").getContext("2d"),
+        "强哥",
+        [114.1, 112, 113, 112, 110.2, null],
+        [null, 112.6, 111.8, 112, 111, 110],
+        "rgb(255, 159, 64)",
+        110,
+        115,
+        "强哥体重变化折线图",
+        "qianggeStats"
+      ),
+      createChart(
+        document.getElementById("huigeChart").getContext("2d"),
+        "辉哥",
+        [141.8, 140, 139.4, 138.2, 138, null],
+        [null, 139, 138, 138.4, 137.4, 138],
+        "rgb(0, 128, 0)",
+        135,
+        145,
+        "辉哥体重变化折线图",
+        "huigeStats"
+      ),
+      createChart(
+        document.getElementById("tianhangChart").getContext("2d"),
+        "天航",
+        [34.6, 23.1, 23, 22.7, null],
+        [null, 34, 21, 22.8, 22.5],
+        "rgb(128, 0, 128)",
+        20,
+        35,
+        "天航百分比变化折线图",
+        "tianhangStats"
+      ),
+    ];
 
-      const rankingElement = document.getElementById("ranking");
-      console.log("stats", stats);
-      rankingElement.innerHTML = `
+    stats.sort((a, b) => b.rate - a.rate);
+
+    const rankingElement = document.getElementById("ranking");
+    rankingElement.innerHTML = `
             <table>
                 <thead>
                     <tr>
                         <th>姓名</th>
+                        <th>最后一次达标情况</th>
                         <th>参加总数</th>
                         <th>达标次数</th>
                         <th>通过率</th>
@@ -278,20 +289,22 @@
                 </thead>
                 <tbody>
                     ${stats
-                      .map(
-                        (stat) => `
+        .map(
+          (stat) => `
                         <tr>
                             <td>${stat.label}</td>
+                            <td>${stat.lastStatus}</td>
                             <td>${stat.total}</td>
                             <td>${stat.reachedTargetCount}</td>
                             <td>${stat.rate}%</td>
                         </tr>
                     `
-                      )
-                      .join("")}
+        )
+        .join("")}
                 </tbody>
             </table>
         `;
-    </script>
-  </body>
+  </script>
+</body>
+
 </html>
