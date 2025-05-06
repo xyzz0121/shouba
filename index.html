@@ -18,28 +18,48 @@
       margin-top: 20px;
     }
 
-    .ranking {
-      text-align: center;
-      font-size: 1.5em;
-      margin-top: 20px;
-    }
-
     table {
-      width: 80%;
-      margin: 20px auto;
       border-collapse: collapse;
+      margin: 25px auto;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      box-shadow: 0 4px 12px rgba(168, 218, 220, 0.2);
+      border-radius: 12px;
+      overflow: hidden;
+      width: 80%;
+      background: #F8F9FA;
     }
 
-    th,
-    td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: center;
+    table thead tr {
+      background-color: #A8DADC;
+      color: #FFFFFF;
+      text-align: left;
+      text-shadow: 1px 1px 2px rgba(160, 200, 205, 0.2);
     }
 
-    th {
-      background-color: #f2f2f2;
+    table th,
+    table td {
+      padding: 14px 22px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
+    table tbody tr {
+      border-bottom: 1px solid #E0E7FF;
+    }
+
+    table tbody tr:hover {
+      background-color: rgba(173, 216, 230, 0.15);
+      transform: translateX(6px);
+    }
+
+    table tbody tr:nth-of-type(even) {
+      background-color: rgba(232, 240, 254, 0.4);
+    }
+
+    table tbody tr:last-of-type {
+      border-bottom: 2px solid #90CAF9;
+    }
+
+    
   </style>
 </head>
 
@@ -284,7 +304,7 @@
                     <tr>
                         <th>姓名</th>
                         <th>已减数值</th>
-                        <th>最后一次达标情况</th>
+                        <th>最后达标情况</th>
                         <th>参加总数</th>
                         <th>达标次数</th>
                         <th>通过率</th>

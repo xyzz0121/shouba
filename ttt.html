@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+/* 清新淡雅风格表格 */
+.styled-table {
+    border-collapse: collapse;
+    margin: 25px auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 4px 12px rgba(168, 218, 220, 0.2);
+    border-radius: 12px;
+    overflow: hidden;
+    width: 80%;
+    background: #F8F9FA;
+}
+
+/* 表头样式 */
+.styled-table thead tr {
+    background-color: #A8DADC;
+    color: #FFFFFF;
+    text-align: left;
+    text-shadow: 1px 1px 2px rgba(160, 200, 205, 0.2);
+}
+
+/* 表头单元格 */
+.styled-table th,
+.styled-table td {
+    padding: 14px 22px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 表格主体行 */
+.styled-table tbody tr {
+    border-bottom: 1px solid #E0E7FF;
+}
+
+/* 悬停效果 */
+.styled-table tbody tr:hover {
+    background-color: rgba(173, 216, 230, 0.15);
+    transform: translateX(6px);
+}
+
+/* 斑马条纹 */
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: rgba(232, 240, 254, 0.4);
+}
+
+/* 最后一行无边框 */
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #90CAF9;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 600px) {
+    .styled-table {
+        width: 95%;
+        font-size: 0.9em;
+    }
+    
+    .styled-table thead {
+        display: none;
+    }
+    
+    .styled-table, .styled-table tbody, .styled-table tr, .styled-table td {
+        display: block;
+        width: 100%;
+    }
+    
+    .styled-table tr {
+        margin-bottom: 12px;
+        background: #FFFFFF;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(168, 218, 220, 0.1);
+    }
+    
+    .styled-table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        border: none !important;
+    }
+    
+    .styled-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        padding-left: 15px;
+        font-weight: 600;
+        text-align: left;
+        color: #64B5F6;
+        font-size: 0.95em;
+    }
+}
+</style>
+</head>
+<body>
+
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>产品名称</th>
+            <th>类别</th>
+            <th>销量</th>
+            <th>价格</th>
+            <th>库存</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>天然竹纤维毛巾</td>
+            <td>家居日用</td>
+            <td>892</td>
+            <td>￥59</td>
+            <td>214</td>
+        </tr>
+        <tr>
+            <td>有机绿茶礼盒</td>
+            <td>食品饮料</td>
+            <td>1,478</td>
+            <td>￥128</td>
+            <td>98</td>
+        </tr>
+        <tr>
+            <td>多肉植物组合</td>
+            <td>园艺花卉</td>
+            <td>654</td>
+            <td>￥89</td>
+            <td>152</td>
+        </tr>
+        <tr>
+            <td>亚麻透气衬衫</td>
+            <td>服装服饰</td>
+            <td>3,216</td>
+            <td>￥299</td>
+            <td>47</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
