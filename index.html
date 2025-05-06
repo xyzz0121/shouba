@@ -102,6 +102,8 @@
       const total = actualData.length - 2;
       const rate = ((reachedTargetCount / total) * 100).toFixed(2);
       const lastStatus = actualData[total] <= targetData[total] ? "达标" : "失败";
+      const loss = (actualData[0] - actualData[total]).toFixed(2);
+      const weightLoss = label == "天航" ? loss + '%' : loss + '斤';
       const isValid = validDataCount > 1;
       document.getElementById(statsId).innerText = `${label}达标次数: ${isValid ? reachedTargetCount : 0
         }`;
@@ -178,7 +180,7 @@
         reachedTargetCount: isValid ? reachedTargetCount : 0,
         total,
         rate,
-
+        weightLoss,
       };
     }
 
@@ -281,6 +283,7 @@
                 <thead>
                     <tr>
                         <th>姓名</th>
+                        <th>已减数值</th>
                         <th>最后一次达标情况</th>
                         <th>参加总数</th>
                         <th>达标次数</th>
@@ -293,6 +296,7 @@
           (stat) => `
                         <tr>
                             <td>${stat.label}</td>
+                            <td>${stat.weightLoss}</td>
                             <td>${stat.lastStatus}</td>
                             <td>${stat.total}</td>
                             <td>${stat.reachedTargetCount}</td>
