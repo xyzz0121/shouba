@@ -1,142 +1,247 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-<style>
-/* 清新淡雅风格表格 */
-.styled-table {
-    border-collapse: collapse;
-    margin: 25px auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    box-shadow: 0 4px 12px rgba(168, 218, 220, 0.2);
-    border-radius: 12px;
-    overflow: hidden;
-    width: 80%;
-    background: #F8F9FA;
-}
+    <meta charset="UTF-8">
+    <title>现代双折线图 - 完整稳定版</title>
+    <!-- 引入指定版本的Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+    <style>
+        /* 基础样式保持不变 */
+        .chart-container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 16px 32px -8px rgba(16, 24, 40, 0.12);
+            min-height: 400px;
+        }
 
-/* 表头样式 */
-.styled-table thead tr {
-    background-color: #A8DADC;
-    color: #FFFFFF;
-    text-align: left;
-    text-shadow: 1px 1px 2px rgba(160, 200, 205, 0.2);
-}
+        .chart-legend {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+            font-family: 'Segoe UI', system-ui;
+            flex-wrap: wrap;
+        }
 
-/* 表头单元格 */
-.styled-table th,
-.styled-table td {
-    padding: 14px 22px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #475569;
+            transition: transform 0.2s;
+            cursor: default;
+        }
 
-/* 表格主体行 */
-.styled-table tbody tr {
-    border-bottom: 1px solid #E0E7FF;
-}
+        .legend-item:hover {
+            transform: translateX(3px);
+        }
 
-/* 悬停效果 */
-.styled-table tbody tr:hover {
-    background-color: rgba(173, 216, 230, 0.15);
-    transform: translateX(6px);
-}
-
-/* 斑马条纹 */
-.styled-table tbody tr:nth-of-type(even) {
-    background-color: rgba(232, 240, 254, 0.4);
-}
-
-/* 最后一行无边框 */
-.styled-table tbody tr:last-of-type {
-    border-bottom: 2px solid #90CAF9;
-}
-
-/* 响应式设计 */
-@media screen and (max-width: 600px) {
-    .styled-table {
-        width: 95%;
-        font-size: 0.9em;
-    }
-    
-    .styled-table thead {
-        display: none;
-    }
-    
-    .styled-table, .styled-table tbody, .styled-table tr, .styled-table td {
-        display: block;
-        width: 100%;
-    }
-    
-    .styled-table tr {
-        margin-bottom: 12px;
-        background: #FFFFFF;
-        border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(168, 218, 220, 0.1);
-    }
-    
-    .styled-table td {
-        text-align: right;
-        padding-left: 50%;
-        position: relative;
-        border: none !important;
-    }
-    
-    .styled-table td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 0;
-        width: 50%;
-        padding-left: 15px;
-        font-weight: 600;
-        text-align: left;
-        color: #64B5F6;
-        font-size: 0.95em;
-    }
-}
-</style>
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
+    <div class="chart-container">
+        <div class="chart-legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #2A9D8F;"></div>
+                销售额（万元）
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #E63946;"></div>
+                利润（万元）
+            </div>
+        </div>
+        <canvas id="dualLineChart"></canvas>
+    </div>
 
-<table class="styled-table">
-    <thead>
-        <tr>
-            <th>产品名称</th>
-            <th>类别</th>
-            <th>销量</th>
-            <th>价格</th>
-            <th>库存</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>天然竹纤维毛巾</td>
-            <td>家居日用</td>
-            <td>892</td>
-            <td>￥59</td>
-            <td>214</td>
-        </tr>
-        <tr>
-            <td>有机绿茶礼盒</td>
-            <td>食品饮料</td>
-            <td>1,478</td>
-            <td>￥128</td>
-            <td>98</td>
-        </tr>
-        <tr>
-            <td>多肉植物组合</td>
-            <td>园艺花卉</td>
-            <td>654</td>
-            <td>￥89</td>
-            <td>152</td>
-        </tr>
-        <tr>
-            <td>亚麻透气衬衫</td>
-            <td>服装服饰</td>
-            <td>3,216</td>
-            <td>￥299</td>
-            <td>47</td>
-        </tr>
-    </tbody>
-</table>
+    <script>
+        // 完整的初始化流程
+        (function() {
+            // 版本检测
+            if (typeof Chart === 'undefined' || Chart.version.split('.')[0] < 4) {
+                console.error('错误：需要Chart.js 4.0+版本');
+                return;
+            }
 
+            // 安全访问插件
+            const safeChartAreaPlugin = {
+                id: 'safeChartArea',
+                beforeDraw: (chart) => {
+                    if (!chart.chartArea) {
+                        chart.chartArea = {
+                            top: 0,
+                            right: chart.width,
+                            bottom: chart.height,
+                            left: 0
+                        };
+                    }
+                }
+            };
+
+            // 初始化配置
+            const config = {
+                type: 'line',
+                data: {
+                    labels: ['1月', '2月', '3月', '4月', '5月', '6月', 
+                            '7月', '8月', '9月', '10月', '11月', '12月'],
+                    datasets: [
+                        {
+                            label: '销售额',
+                            data: [23, 38, 35, 52, 61, 78, 72, 65, 58, 49, 36, 32],
+                            borderColor: '#2A9D8F',
+                            backgroundColor: (context) => {
+                                if (!context.chart?.chartArea) return 'transparent';
+                                const { top, bottom } = context.chart.chartArea;
+                                const ctx = context.chart.ctx;
+                                const gradient = ctx.createLinearGradient(0, top, 0, bottom);
+                                gradient.addColorStop(0, 'rgba(42, 157, 143, 0.3)');
+                                gradient.addColorStop(1, 'rgba(42, 157, 143, 0.05)');
+                                return gradient;
+                            },
+                            tension: 0.4,
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            fill: true,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: '利润',
+                            data: [12, 18, 25, 32, 41, 55, 48, 39, 34, 28, 22, 18],
+                            borderColor: '#E63946',
+                            backgroundColor: (context) => {
+                                if (!context.chart?.chartArea) return 'transparent';
+                                const { top, bottom } = context.chart.chartArea;
+                                const ctx = context.chart.ctx;
+                                const gradient = ctx.createLinearGradient(0, top, 0, bottom);
+                                gradient.addColorStop(0, 'rgba(230, 57, 70, 0.3)');
+                                gradient.addColorStop(1, 'rgba(230, 57, 70, 0.05)');
+                                return gradient;
+                            },
+                            tension: 0.4,
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            fill: true,
+                            yAxisID: 'y2'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#1D2939',
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 13 },
+                            borderColor: '#344054',
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: (context) => 
+                                    `${context.dataset.label}: ${context.parsed.y}万元`
+                            }
+                        },
+                        [safeChartAreaPlugin.id]: safeChartAreaPlugin
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: true,
+                                drawBorder: false,
+                                color: 'rgba(226, 232, 240, 0.5)'
+                            },
+                            ticks: {
+                                font: { size: 12 },
+                                color: '#667085'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            position: 'left',
+                            grid: {
+                                display: true,
+                                drawBorder: false,
+                                color: 'rgba(42, 157, 143, 0.1)'
+                            },
+                            ticks: {
+                                font: { size: 12 },
+                                color: '#2A9D8F',
+                                callback: (value) => `${value}万元`
+                            }
+                        },
+                        y2: {
+                            type: 'linear',
+                            position: 'right',
+                            grid: {
+                                display: true,
+                                drawBorder: false,
+                                color: 'rgba(230, 57, 70, 0.1)'
+                            },
+                            ticks: {
+                                font: { size: 12 },
+                                color: '#E63946',
+                                callback: (value) => `${value}万元`
+                            }
+                        }
+                    },
+                    elements: {
+                        line: {
+                            borderCapStyle: 'round',
+                            borderJoinStyle: 'round'
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            };
+
+            // 初始化流程
+            function initChart() {
+                const canvas = document.getElementById('dualLineChart');
+                if (!canvas?.getContext) {
+                    console.error('错误：未找到有效的canvas元素');
+                    return;
+                }
+
+                try {
+                    new Chart(canvas.getContext('2d'), config);
+                } catch (error) {
+                    console.error('图表初始化失败:', error);
+                }
+            }
+
+            // DOM就绪检测
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initChart);
+            } else {
+                initChart();
+            }
+
+            // 响应式处理
+            window.addEventListener('resize', () => {
+                const existingChart = Chart.getChart('dualLineChart');
+                if (existingChart) existingChart.resize();
+            });
+        })();
+    </script>
 </body>
 </html>
