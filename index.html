@@ -99,6 +99,10 @@
   <div class="chart-container">
     <canvas id="huigeChart"></canvas>
   </div>
+  <div class="stats" id="huige2Stats"></div>
+  <div class="chart-container">
+    <canvas id="huige2Chart"></canvas>
+  </div>
   <div class="stats" id="tianhangStats"></div>
   <div class="chart-container">
     <canvas id="tianhangChart"></canvas>
@@ -113,7 +117,11 @@
       minY,
       maxY,
       title,
-      statsId
+      statsId,
+      sportTarget1,
+      sportTarget2,
+      sport1,
+      sport2,
     ) {
       const reachedTargetCount = actualData.filter(
         (value, index) =>
@@ -129,6 +137,7 @@
       const lastStatus = actualData[total] <= targetData[total] ? "达标" : "失败";
       const loss = (actualData[0] - actualData[total]).toFixed(2);
       const weightLoss = label == "天航" ? loss + '%' : loss + '斤';
+      const target = label=="辉哥" ?sportTarget1[sportTarget1.length-1]+ '引' + sportTarget2[sportTarget2.length-1]+'俯':targetData[targetData.length - 1]
       const isValid = validDataCount > 1;
       document.getElementById(statsId).innerText = `${label}达标次数: ${isValid ? reachedTargetCount : 0
         }`;
@@ -139,7 +148,7 @@
         type: "line",
         data: {
           labels,
-          datasets: [
+          datasets: label == "辉哥" ? [
             {
               label: label + "实际",
               data: actualData,
@@ -150,6 +159,7 @@
               pointBorderColor: color,
               pointRadius: 5,
               pointHoverRadius: 7,
+              yAxisID: 'y',
             },
             {
               label: label + "目标",
@@ -162,6 +172,65 @@
               pointBorderColor: color,
               pointRadius: 5,
               pointHoverRadius: 7,
+              yAxisID: 'y',
+            },
+            {
+              label: "引体向上目标",
+              data: sportTarget1,
+              type: "bar",
+              backgroundColor: "rgb(255, 140, 0)",
+              stack: 'Stack 0',
+              yAxisID: 'y1',
+            },
+            {
+              label: "引体向上实际",
+              data: sport1,
+              type: "bar",
+              backgroundColor: "blue",
+              stack: 'Stack 0',
+              yAxisID: 'y1',
+            },
+            {
+              label: "俯卧撑目标",
+              data: sportTarget2,
+              type: "bar",
+              backgroundColor: "rgb(255, 140, 0)",
+              stack: 'Stack 1',
+              yAxisID: 'y1',
+            },
+            {
+              label: "俯卧撑实际",
+              data: sport2,
+              type: "bar",
+              backgroundColor: "blue",
+              stack: 'Stack 1',
+              yAxisID: 'y1',
+            },
+          ] : [
+            {
+              label: label + "实际",
+              data: actualData,
+              borderColor: color,
+              tension: 0.1,
+              fill: false,
+              pointBackgroundColor: color,
+              pointBorderColor: color,
+              pointRadius: 5,
+              pointHoverRadius: 7,
+              yAxisID: 'y',
+            },
+            {
+              label: label + "目标",
+              data: targetData,
+              borderColor: color,
+              borderDash: [5, 5],
+              tension: 0.1,
+              fill: false,
+              pointBackgroundColor: color,
+              pointBorderColor: color,
+              pointRadius: 5,
+              pointHoverRadius: 7,
+              yAxisID: 'y',
             },
           ],
         },
@@ -206,6 +275,7 @@
         total,
         rate,
         weightLoss,
+        target
       };
     }
 
@@ -213,8 +283,8 @@
       createChart(
         document.getElementById("zhouyangChart").getContext("2d"),
         "周扬",
-        [177.5, 176, 173.7, 173, 170.5, 169.2, null],
-        [null, 176, 174, 173, 171, 169.5, 168.5],
+        [177.5, 176, 173.7, 173, 170.5, 169.2, 168.3, null],
+        [null, 176, 174, 173, 171, 169.5, 168.5, 167.5],
         "rgb(255, 99, 132)",
         170,
         180,
@@ -224,8 +294,8 @@
       createChart(
         document.getElementById("xiaopangChart").getContext("2d"),
         "小胖",
-        [111.2, 113, 111.7, 111, 112, 112.8, null],
-        [null, 110, 112, 111, 110.5, 111, 112],
+        [111.2, 113, 111.7, 111, 112, 112.8, 111.2, null],
+        [null, 110, 112, 111, 110.5, 111, 112, 110],
         "rgb(54, 162, 235)",
         109,
         113,
@@ -235,8 +305,8 @@
       createChart(
         document.getElementById("ziboChart").getContext("2d"),
         "子博",
-        [167.9, 168, 167, 165.7, 164.4, 165, null],
-        [null, 167, 167, 166, 165.2, 164.4, 165],
+        [167.9, 168, 167, 165.7, 164.4, 165, 164.9, null],
+        [null, 167, 167, 166, 165.2, 164.4, 165, 164],
         "rgb(255, 206, 86)",
         165,
         170,
@@ -246,8 +316,8 @@
       createChart(
         document.getElementById("junggeChart").getContext("2d"),
         "骏哥",
-        [136.6, 140, 137.8, 135.8, 135.5, 135.7, null],
-        [null, 136, 138.5, 137.5, 136, 136, 135.5],
+        [136.6, 140, 137.8, 135.8, 135.5, 135.7, 134.9, null],
+        [null, 136, 138.5, 137.5, 136, 136, 135.5, 134.8,],
         "rgb(75, 192, 192)",
         135,
         140,
@@ -257,8 +327,8 @@
       createChart(
         document.getElementById("sancaizitongziChart").getContext("2d"),
         "散财童子贵",
-        [205.2, 215, 215, 215, 215, 212.2, null],
-        [null, 205, 203, 203, 203, 200, 208],
+        [205.2, 215, 215, 215, 215, 212.2, 214, null],
+        [null, 205, 203, 203, 203, 200, 208, 210],
         "rgb(153, 102, 255)",
         200,
         220,
@@ -268,8 +338,8 @@
       createChart(
         document.getElementById("qianggeChart").getContext("2d"),
         "强哥",
-        [114.1, 112, 113, 112, 110.2, 109.9, null],
-        [null, 112.6, 111.8, 112, 111, 110, 109],
+        [114.1, 112, 113, 112, 110.2, 109.9, 108.8, null],
+        [null, 112.6, 111.8, 112, 111, 110, 109, 107.8],
         "rgb(255, 159, 64)",
         110,
         115,
@@ -279,19 +349,23 @@
       createChart(
         document.getElementById("huigeChart").getContext("2d"),
         "辉哥",
-        [141.8, 140, 139.4, 138.2, 138, 140.2, null],
-        [null, 139, 138, 138.4, 137.4, 138, 137],
+        [141.8, 140, 139.4, 138.2, 138, 140.2, 140, null],
+        [null, 139, 138, 138.4, 137.4, 138, 137, null],
         "rgb(0, 128, 0)",
         135,
         145,
         "辉哥体重变化折线图",
-        "huigeStats"
+        "huigeStats",
+        [0, 0, 0, 0, 0, 0, 0, 10],
+        [0, 0, 0, 0, 0, 0, 0, 40],
+        [0, 0, 0, 0, 0, 0, 0, null],
+        [0, 0, 0, 0, 0, 0, 0, null],
       ),
       createChart(
         document.getElementById("tianhangChart").getContext("2d"),
         "天航",
-        [34.6, 23.1, 23, 22.7, 22.7, null],
-        [null, 34, 21, 22.8, 22.5, 22.6],
+        [34.6, 23.1, 23, 22.7, 22.7, 23.3, null],
+        [null, 34, 21, 22.8, 22.5, 22.6, 23.2],
         "rgb(128, 0, 128)",
         20,
         35,
@@ -308,6 +382,7 @@
                 <thead>
                     <tr>
                         <th>姓名</th>
+                        <th>下周目标</th>
                         <th>已减数值</th>
                         <th>最后达标情况</th>
                         <th>参加总数</th>
@@ -321,6 +396,7 @@
           (stat) => `
                         <tr>
                             <td>${stat.label}</td>
+                            <td>${stat.target}</td>
                             <td>${stat.weightLoss}</td>
                             <td>${stat.lastStatus}</td>
                             <td>${stat.total}</td>
