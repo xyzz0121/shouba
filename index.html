@@ -119,9 +119,7 @@
       title,
       statsId,
       sportTarget1,
-      sportTarget2,
       sport1,
-      sport2,
     ) {
       const reachedTargetCount = actualData.filter(
         (value, index) =>
@@ -132,12 +130,12 @@
       const validDataCount = actualData.filter(
         (value) => value !== null
       ).length;
-      const total = actualData.length - 2;
+      const total = label == "辉哥" ? sport1.length - 2 : actualData.length - 2;
       const rate = ((reachedTargetCount / total) * 100).toFixed(2);
-      const lastStatus = actualData[total] <= targetData[total] ? "达标" : "失败";
+      const lastStatus = label == "辉哥" ? sportTarget1[sportTarget1.length - 2] <= sport1[sport1.length - 2] ? "达标" : "失败" : actualData[total] <= targetData[total] ? "达标" : "失败";
       const loss = (actualData[0] - actualData[total]).toFixed(2);
       const weightLoss = label == "天航" ? loss + '%' : loss + '斤';
-      const target = label == "辉哥" ? sportTarget1[sportTarget1.length - 1] + '引' + sportTarget2[sportTarget2.length - 1] + '俯' : targetData[targetData.length - 1]
+      const target = label == "辉哥" ? sportTarget1[sportTarget1.length - 1] : targetData[targetData.length - 1]
       const isValid = validDataCount > 1;
       document.getElementById(statsId).innerText = `${label}达标次数: ${isValid ? reachedTargetCount : 0
         }`;
@@ -175,7 +173,7 @@
               yAxisID: 'y',
             },
             {
-              label: "引体向上目标",
+              label: "运动量",
               data: sportTarget1,
               type: "bar",
               backgroundColor: "rgb(255, 140, 0)",
@@ -183,26 +181,10 @@
               yAxisID: 'y1',
             },
             {
-              label: "引体向上实际",
+              label: "运动目标",
               data: sport1,
               type: "bar",
-              backgroundColor: "blue",
-              stack: 'Stack 0',
-              yAxisID: 'y1',
-            },
-            {
-              label: "俯卧撑目标",
-              data: sportTarget2,
-              type: "bar",
-              backgroundColor: "rgb(255, 140, 0)",
-              stack: 'Stack 1',
-              yAxisID: 'y1',
-            },
-            {
-              label: "俯卧撑实际",
-              data: sport2,
-              type: "bar",
-              backgroundColor: "blue",
+              backgroundColor: "rgb(0, 140, 0)",
               stack: 'Stack 1',
               yAxisID: 'y1',
             },
@@ -349,17 +331,15 @@
       createChart(
         document.getElementById("huigeChart").getContext("2d"),
         "辉哥",
-        [141.8, 140, 139.4, 138.2, 138, 140.2, 140, null],
-        [null, 139, 138, 138.4, 137.4, 138, 137, null],
+        [141.8, 140, 139.4, 138.2, 138, 140.2, 140, null, null],
+        [null, 139, 138, 138.4, 137.4, 138, 137, null, null],
         "rgb(0, 128, 0)",
         135,
         145,
         "辉哥体重变化折线图",
         "huigeStats",
-        [0, 0, 0, 0, 0, 0, 0, 10],
-        [0, 0, 0, 0, 0, 0, 0, 40],
-        [0, 0, 0, 0, 0, 0, 0, null],
-        [0, 0, 0, 0, 0, 0, 0, null],
+        [0, 0, 0, 0, 0, 0, 0, 62, null],
+        [0, 0, 0, 0, 0, 0, 0, 62, 64],
       ),
       createChart(
         document.getElementById("tianhangChart").getContext("2d"),
